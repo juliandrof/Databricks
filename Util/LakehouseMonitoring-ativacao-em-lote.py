@@ -26,7 +26,7 @@ import time
 # COMMAND ----------
 
 # DBTITLE 1,Create Lakehouse Monitoring
-def create_monitor(catalog,schema,user_email,output_catalog,cron,flg):
+def set_monitoring(catalog,schema,user_email,output_catalog,cron,flg):
   df = spark.read.table(f"{catalog}.information_schema.tables").filter("table_type = 'MANAGED' OR table_type = 'EXTERNAL'").select('table_schema','table_name')
   for row in df.filter(df.table_schema == schema).collect():
     table_name = row.table_name
@@ -55,7 +55,7 @@ def create_monitor(catalog,schema,user_email,output_catalog,cron,flg):
 # COMMAND ----------
 
 # DBTITLE 1,Creating Monitoring System
-def criar_monitoramento():
+def create_monitoring():
     print("Vamos definir os parâmetros para criação do monitoramento")
 
     catalog = input("Digite o nome do catálogo onde estão suas tabelas que serão monitoradas")
@@ -77,10 +77,10 @@ def criar_monitoramento():
     cron_expression = f"{minute} {hour} {day_of_month} {month} {day_of_week} ?"
     spark.sql(f"CREATE CATALOG IF NOT EXISTS {output_catalog}")
     spark.sql(f"CREATE SCHEMA IF NOT EXISTS {output_catalog}.{schema}")
-    create_monitor(catalog,schema,user_email,output_catalog,cron_expression,flg)
+    set_monitoring(catalog,schema,user_email,output_catalog,cron_expression,flg)
 
 
 # COMMAND ----------
 
 # DBTITLE 1,Create Monitor in Monitoring PRD
-criar_monitoramento()
+create_monitoring()
