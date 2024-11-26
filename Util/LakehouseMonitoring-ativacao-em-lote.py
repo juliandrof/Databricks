@@ -69,16 +69,26 @@ def create_monitoring():
     output_catalog=input("Digite o nome do catálogo onde deseja salvar os dados do monitoramento (se não existir, ele será criado)")
    
     print("Agora, vamos criar o agendamento do monitoramento")
-    day_of_month = input("Caso a execução seja mensal, digite o dia do mês(1-31) caso contrário digite *): ")
+    day_of_month = input("Caso a execução seja mensal, digite o dia do mês(1-31) caso contrário digite ?): ")
     day_of_week = input("Para semanal, digite o dia da semana (0-6, 0=Domingo, * para diário): ")
     hour = input("Hora da execução (0-23)): ")
     minute = input("Minuto de início da execução (0-59): ")
+    day_of_week_map = {
+        '0': 'SUN',
+        '1': 'MON',
+        '2': 'TUE',
+        '3': 'WED',
+        '4': 'THU',
+        '5': 'FRI',
+        '6': 'SAT',
+        '*': '*'
+    }
+    day_of_week = day_of_week_map.get(day_of_week, '*')
     month = '*'
-    cron_expression = f"{minute} {hour} {day_of_month} {month} {day_of_week} ?"
+    cron_expression = f"0 {minute} {hour} {day_of_month} {month} {day_of_week}"
     spark.sql(f"CREATE CATALOG IF NOT EXISTS {output_catalog}")
     spark.sql(f"CREATE SCHEMA IF NOT EXISTS {output_catalog}.{schema}")
     set_monitoring(catalog,schema,user_email,output_catalog,cron_expression,flg)
-
 
 # COMMAND ----------
 
